@@ -45,30 +45,14 @@ async def ban(interaction: discord.Interaction, membre: discord.Member, raison: 
     except Exception as e:
         await interaction.response.send_message("Le membre n'a pas pu etre banni")
 
-@bot.tree.command(name="sondage", description="Créer un sondage")
-@app_commands.describe(question="La question a poser", choix="Les options (séparées d'une virgule)")
-async def sondage(interaction: discord.Interaction, question: str, choix: str):
-    liste_choix = [c.strip for c in choix.split(",")]
-    if len(liste_choix) > 15:
-        await interaction.response.send_message("Le sondage ne peut pas dépasser 15 options", ephemeral=True)
-        return
-    
-    embed = discord.Embed(title="📊 Sondage", description=f"**{question}**", color=discord.Color.blue())
-    embed.set_footer(text=f"proposé par {interaction.user.display_name}")
-
-    view = discord.ui.View(timeout=None)
-
-    for option in liste_choix:
-        bouton = discord.ui.Button(label=option, style=discord.ButtonStyle.secondary)
-
-        def create_callback(label):
-            async def callback(inter: discord.Interaction):
-                await inter.response.send_message(f"Vous avez voté pour {label}", ephemeral=True)
-            return callback
-        
-        bouton.callback = create_callback(option)
-        view.add_item(bouton)
-
-    await interaction.response.send_message(embed=embed, view=view)
+@bot.tree.command(name="embed")
+@app_commands.describe(titre="Titre de l'embed", description="Contenu")
+async def embed(interaction: discord.Interaction, titre: str, description: str):
+    new_embed = discord.Embed(
+        title = titre,
+        description=description,
+        color=discord.Color.blue()
+    )
+    await interaction.response.send_message(embed=new_embed)
 
 bot.run(token)
